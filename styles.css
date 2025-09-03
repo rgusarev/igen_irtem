@@ -1,0 +1,49 @@
+#tableCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.card {
+  position: relative;
+  width: 200px; /* Adjust this size if needed */
+  height: 100px; /* Adjust this size if needed */
+  margin: 10px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.flipCard {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: all 0.8s ease;
+}
+
+.face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  font-weight: 700;
+  width: 100%;
+  height: 100%;
+  font-size: 30px; /* Adjust this size if needed */
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+  text-align: center;
+  border-radius: 2px;
+  background: #6a5acd;
+  color: white;
+  backface-visibility: hidden;
+}
+
+.face.back {
+  transform: rotateY(180deg);
+  background: #ff6347;
+}
+
+.card:hover .flipCard {
+  transform: rotateY(180deg);
+}
