@@ -1,6 +1,9 @@
-const tableCards = document.getElementById('tableCards');
+const tableCardsContainer = document.getElementById('tableCards');
+const wordFileInput = document.getElementById('wordFile');
+const reloadWordsButton = document.getElementById('reloadWordsButton');
 
-var words = [
+// Default words array (as provided)
+let wordsData = [
   ["lawyer", "ügyvéd"],
   ["work", "dolgozik"],
   ["artist", "művész"],
@@ -9,7 +12,7 @@ var words = [
   ["soldier", "katona"],
   ["cook", "szakács"],
   ["actor", "színész"],
-  ["actress", "színésznő"], 
+  ["actress", "színésznő"],
   ["postal worker", "postas"],
   ["worker", "munkás"],
   ["writer", "író"],
@@ -166,7 +169,7 @@ var words = [
   ["new", "új"],
   ["old", "régi"],
   ["in front of", "előtt"],
-  ["train station", "pályaudvar"]
+  ["train station", "pályaudvar"],
   ["behind", "mögött"],
   ["river", "folyó"],
   ["under", "alatt"],
@@ -519,7 +522,7 @@ var words = [
   ["one of the", "egyik"],
   ["another", "masik"],
   ["arrive", "érkezik"],
-  // ["", "Berletem"],
+  // ["", "Berletem"], // Empty entry
   ["ticket", "jegy"],
   ["and", "pedig"],
   ["safe", "biztonsagos"],
@@ -696,7 +699,7 @@ var words = [
   ["from my contacts", "elérhetőségedeet"],
   ["page", "oldalon"],
   ["trash can", "kukák"],
-  ["at this/that", "ennel/annal"],_
+  ["at this/that", "ennel/annal"],
   ["on this/that", "ezen/azon"],
   ["in this/that", "ebben/abban"],
   ["these/those", "ezeket/azokat"],
@@ -743,87 +746,170 @@ var words = [
   ["owl", "bagoly"],
   ["hen", "tyúk"],
   ["guinea pig", "tengerimalac"],
-  ["", ""],
-  ["", ""],
-  ["", ""],
-  ["", ""],
-  ["", ""],
-  ["", ""],
 ];
 
-function shuffle(array) {
-  let currentIndex = array.length;
+// Ensure we always have at least 25 words for the 5x5 grid
+const MIN_WORDS_FOR_GRID = 25;
 
-  // While there remain elements to shuffle...
-  while (currentIndex != 0) {
-
-    // Pick a remaining element...
-    let randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+// Function to shuffle an array (Fisher-Yates Algorithm)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
   }
+  return array;
 }
 
-shuffle(words);
+// Function to parse CSV text
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    const wordsArray = [];
 
-document.addEventListener("DOMContentLoaded", function() {
-  let cards = document.querySelectorAll('.card');
-  
-  cards.forEach(function(card) {
-    card.addEventListener('click', function() {
-      card.classList.toggle('flipped');
-    });
-  });
-});
-
-let count = 0; // counter to keep track of which word to display
-
-for (let i = 0; i < 5; i++) {
-    // create a row
-    let row = document.createElement('div');
-    row.style.display = 'flex';
-
-    for (let j = 0; j < 5; j++) {
-
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        const flipCard = document.createElement('div');
-        flipCard.className = 'flipCard';
+    for (const line of lines) {
+        // Split by comma, but handle potential commas within quotes (simple CSV parsing)
+        // This regex handles quoted fields containing commas, but won't handle escaped quotes.
+        // For robust CSV parsing, a library would be better, but for typical cases this is fine.
+        const regex = /("([^"]*)"|[^,]*)(,|$)/g;
+        let match;
+        let cells = [];
+        while ((match = regex.exec(line)) !== null && match[0] !== '') {
+            // match[1] is the captured group (either quoted or non-quoted cell)
+            // match[2] is the content inside quotes if it was a quoted cell
+            cells.push(match[2] || match[1].replace(/^"|"$/g, '')); // Remove surrounding quotes if they exist
+        }
         
-        const frontFace = document.createElement('div');
-        frontFace.className = 'face front';
-        // frontFace.innerHTML = wordsFront[count];  // use counter to index the wordList
-        frontFace.innerHTML = words[count][0];  // use counter to index the wordList
-        
-        const backFace = document.createElement('div');
-        backFace.className = 'face back';
-        // backFace.innerHTML = wordsBack[count];  // use counter to index the wordList
-        backFace.innerHTML = words[count][1];  // use counter to index the wordList
-
-        flipCard.appendChild(frontFace);
-        flipCard.appendChild(backFace);
-        card.appendChild(flipCard);
-
-        card.addEventListener('click', () => flipCard.classList.toggle('flipped'));
-        
-        row.appendChild(card);
-
-        count++;  // increment counter after card creation
+        if (cells.length === 2) {
+            // Trim whitespace from each cell
+            const cleanedCells = cells.map(cell => cell.trim());
+            // Ensure cells are not empty strings before adding
+            if (cleanedCells[0] && cleanedCells[1]) {
+                wordsArray.push(cleanedCells);
+            }
+        }
     }
-    tableCards.appendChild(row);
+    return wordsArray;
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  let cards = document.querySelectorAll('.card');
 
-  cards.forEach((card) => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('flipped');
-    });
-  });
+// Function to create and display cards
+function createAndDisplayCards(wordsToDisplay) {
+    // Clear previous cards
+    tableCardsContainer.innerHTML = '';
+
+    if (!wordsToDisplay || wordsToDisplay.length === 0) {
+        tableCardsContainer.innerHTML = '<p>No words available. Please load a word list.</p>';
+        return;
+    }
+
+    const shuffledWords = shuffleArray(wordsToDisplay);
+    let count = 0;
+
+    // Create a 5x5 grid
+    for (let i = 0; i < 5; i++) {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.justifyContent = 'center'; // Center cards in the row
+
+        for (let j = 0; j < 5; j++) {
+            if (count >= shuffledWords.length) break; // Stop if we run out of words
+
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+
+            const flipCardDiv = document.createElement('div');
+            flipCardDiv.className = 'flipCard';
+
+            const frontFace = document.createElement('div');
+            frontFace.className = 'face front';
+            frontFace.innerHTML = shuffledWords[count][0]; // English word
+
+            const backFace = document.createElement('div');
+            backFace.className = 'face back';
+            backFace.innerHTML = shuffledWords[count][1]; // Hungarian word
+
+            flipCardDiv.appendChild(frontFace);
+            flipCardDiv.appendChild(backFace);
+            cardDiv.appendChild(flipCardDiv);
+
+            // Add click listener for flipping
+            cardDiv.addEventListener('click', () => {
+                flipCardDiv.classList.toggle('flipped');
+            });
+
+            row.appendChild(cardDiv);
+            count++;
+        }
+        tableCardsContainer.appendChild(row);
+        if (count >= shuffledWords.length) break; // Stop after filling the grid
+    }
+}
+
+// Event listener for the file input
+wordFileInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return; // No file selected
+    }
+
+    // Basic validation: check if it's a CSV file
+    if (file.type && !file.type.includes('csv') && !file.name.toLowerCase().endsWith('.csv')) {
+        alert('Please select a valid CSV file.');
+        // Clear the input value so the same file can be selected again if needed
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const csvText = e.target.result;
+        try {
+            const loadedWords = parseCSV(csvText);
+            if (loadedWords.length >= MIN_WORDS_FOR_GRID) {
+                wordsData = loadedWords; // Update the global wordsData
+                alert(`Loaded ${loadedWords.length} words. Displaying the first 25.`);
+                createAndDisplayCards(wordsData.slice(0, 25)); // Display initial 25 cards from loaded data
+            } else {
+                alert(`The CSV file must contain at least ${MIN_WORDS_FOR_GRID} word pairs. Loaded ${loadedWords.length}. Please choose a file with more data.`);
+                // Clear the input value so the same file can be selected again if needed
+                event.target.value = '';
+                wordsData = []; // Reset to no words if invalid
+                tableCardsContainer.innerHTML = '<p>No words available. Please load a word list.</p>';
+            }
+        } catch (error) {
+            alert('Error parsing CSV file: ' + error.message);
+            console.error("CSV Parsing Error:", error);
+            // Clear the input value so the same file can be selected again if needed
+            event.target.value = '';
+            wordsData = []; // Reset to no words if error
+            tableCardsContainer.innerHTML = '<p>Error loading words. Please check the file format.</p>';
+        }
+    };
+
+    reader.onerror = function() {
+        alert('Error reading file.');
+        // Clear the input value so the same file can be selected again if needed
+        event.target.value = '';
+        wordsData = []; // Reset to no words if error
+        tableCardsContainer.innerHTML = '<p>Error loading words.</p>';
+    };
+
+    reader.readAsText(file); // Read the file as plain text
 });
 
+// Event listener for the "Reload/Shuffle Words" button
+reloadWordsButton.addEventListener('click', function() {
+    if (wordsData.length === 0) {
+        alert("Please load a word list first.");
+        return;
+    }
+    // Shuffle the current wordsData and display the first 25
+    createAndDisplayCards(wordsData.slice(0, 25));
+});
+
+// Initial display of cards on page load using the default words
+// Ensure we always display at least 25 cards, even if the default list is smaller (though it's much larger)
+document.addEventListener('DOMContentLoaded', () => {
+    // Use the first 25 words from the default list if available
+    createAndDisplayCards(wordsData.slice(0, 25));
+});

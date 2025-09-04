@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ENG-HUN word train</title>
+    <title>ENG-HUN Word Train</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
+    <div class="controls">
+        <label for="wordFile" class="load-button">Load Words</label>
+        <input type="file" id="wordFile" accept=".csv" style="display: none;">
+        <button id="reloadWordsButton" class="load-button">Reload/Shuffle Words</button>
+    </div>
+
     <div id="tableCards"></div>
 
     <script src="script.js"></script>

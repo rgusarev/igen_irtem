@@ -1,7 +1,18 @@
+body {
+    font-family: 'Courier New', monospace; /* Keep the existing font */
+    background-color: #f0f8ff; /* A light background color */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 #tableCards {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center; /* Center the cards container */
+  margin-top: 20px; /* Add some space below the controls */
 }
 
 .card {
@@ -18,7 +29,7 @@
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: all 0.8s ease;
+  transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
 }
 
 .face {
@@ -29,21 +40,107 @@
   font-weight: 700;
   width: 100%;
   height: 100%;
-  font-size: 30px; /* Adjust this size if needed */
-  font-family: 'Courier New', monospace;
+  font-size: 24px; /* Slightly smaller font for better fit */
   line-height: 1.5;
   text-align: center;
-  border-radius: 2px;
-  background: #6a5acd;
-  color: white;
+  border-radius: 8px; /* Slightly rounded corners for cards */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add a subtle shadow */
+  border: 2px solid #fff; /* White border for contrast */
+  box-sizing: border-box; /* Include border and padding in the element's total width and height */
   backface-visibility: hidden;
 }
 
-.face.back {
-  transform: rotateY(180deg);
-  background: #ff6347;
+.face.front {
+  background: #6a5acd; /* Indigo */
+  color: white;
+  transform: rotateY(0deg); /* Explicitly set front face rotation */
 }
 
-.card:hover .flipCard {
+.face.back {
+  background: #ff6347; /* Tomato Red */
+  color: white;
   transform: rotateY(180deg);
+}
+
+.flipCard.flipped {
+  transform: rotateY(180deg);
+}
+
+/* Styles for the controls */
+.controls {
+    display: flex;
+    gap: 15px; /* Space between button and file input */
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.load-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.load-button:hover {
+    background-color: #45a049;
+}
+
+/* Hide the default file input */
+input[type="file"] {
+    display: none;
+}
+
+/* Style the label to look like a button */
+label[for="wordFile"] {
+    background-color: #007bff; /* Blue */
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    transition: background-color 0.3s ease;
+}
+
+label[for="wordFile"]:hover {
+    background-color: #0056b3;
+}
+
+#reloadWordsButton {
+    background-color: #ffc107; /* Yellow */
+    color: #333; /* Dark text */
+}
+
+#reloadWordsButton:hover {
+    background-color: #e0a800;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .load-button, label[for="wordFile"] {
+        width: 100%;
+        margin-bottom: 10px;
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+    }
+    #tableCards {
+        flex-direction: column; /* Stack cards vertically on small screens */
+        align-items: center;
+    }
+    .card {
+        width: 100%; /* Make cards take full width */
+        max-width: 200px; /* Max width for cards still */
+    }
 }
