@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Italian Pronunciation Practice</title>
+    <style>
+        body { font-family: sans-serif; padding: 2em; }
+        h1 { color: #333; }
+        .speakable {
+            font-size: 1.5em;
+            padding: 10px 15px;
+            margin: 10px;
+            background-color: #eef7ff;
+            border: 1px solid #bce8f1;
+            border-radius: 8px;
+            cursor: pointer; /* Makes it look clickable */
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .speakable:hover {
+            background-color: #d1ecf1;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Click a Word to Hear It</h1>
+
+    <span class="speakable">Buongiorno</span>
+    <span class="speakable">Grazie</span>
+    <span class="speakable">Per favore</span>
+    <span class="speakable">Arrivederci</span>
+
+    <script src="speech.js"></script> 
+
+</body>
+</html>
