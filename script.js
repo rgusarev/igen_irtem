@@ -10,7 +10,7 @@ const vocabularies = {
   "default": { name: "Select a vocabulary...", url: "" },
   "hungarian-common-words": {
     name: "Hungarian common words",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian_common_words.csv"
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian-common-words.csv"
   },
   "italian-common-nouns": {
     name: "Italian common words",
