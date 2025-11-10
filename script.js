@@ -9,19 +9,19 @@ const vocabularies = {
   // Use a "placeholder" or default value for the first option
   "default": { name: "Select a vocabulary...", url: "" },
   "hungarian-common-words": {
-    name: "Italian Numerals",
+    name: "Hungarian common words",
     url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian_common_words.csv"
   },
   "italian-common-nouns": {
-    name: "Italian Numerals",
+    name: "Italian common words",
     url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv"
   },
   "italian-numerals": {
-    name: "Italian Numerals",
+    name: "Italian numerals",
     url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv"
   },
   "italian-irr-verbs": {
-    name: "Italian Irregular Verbs",
+    name: "Italian irregular verbs",
     url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv"
   },
   "italian-introductory": {
