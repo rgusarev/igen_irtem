@@ -8,7 +8,14 @@ const reloadWordsButton = document.getElementById('reloadWordsButton');
 const vocabularies = {
   // Use a "placeholder" or default value for the first option
   "default": { name: "Select a vocabulary...", url: "" },
-
+  "hungarian-common-words": {
+    name: "Italian Numerals",
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian_common_words.csv"
+  },
+  "italian-common-nouns": {
+    name: "Italian Numerals",
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv"
+  },
   "italian-numerals": {
     name: "Italian Numerals",
     url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv"
