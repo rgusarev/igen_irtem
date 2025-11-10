@@ -1,915 +1,173 @@
+// --- 1. GET HTML ELEMENTS ---
 const tableCardsContainer = document.getElementById('tableCards');
-const wordFileInput = document.getElementById('wordFile');
+const vocabularySelector = document.getElementById('vocabularySelector'); // New: dropdown element
 const reloadWordsButton = document.getElementById('reloadWordsButton');
 
-// Default words array (as provided)
-let wordsData = [
-  ["lawyer", "ügyvéd"],
-  ["work", "dolgozik"],
-  ["artist", "művész"],
-  ["policeman", "rendőr"],
-  ["boss", "főnök"],
-  ["soldier", "katona"],
-  ["cook", "szakács"],
-  ["actor", "színész"],
-  ["actress", "színésznő"],
-  ["postal worker", "postas"],
-  ["worker", "munkás"],
-  ["writer", "író"],
-  ["write", "ír"],
-  ["kindergarten teacher", "óvónő"],
-  ["firefighter", "tűzoltó"],
-  ["politician", "politikus"],
-  ["director", "rendező"],
-  ["athlete", "sportoló"],
-  ["composer", "zeneszerző"],
-  ["secretary", "titkárnő"],
-  ["tired", "fáradt"],
-  ["always", "mindig"],
-  ["angry", "mérges"],
-  ["at home", "itthon"],
-  ["beer", "sör"],
-  ["bieng inside", "ban/ben"],
-  ["bird", "madár"],
-  ["book", "könyv"],
-  ["bore", "untat"],
-  ["boring", "unalmas"],
-  ["boy", "fiú"],
-  ["calm / relaxed", "nyugodt"],
-  ["chair", "szék"],
-  ["classroom", "tanterem"],
-  ["coffee", "kávé"],
-  ["dance", "táncol"],
-  ["dictionary", "szotar"],
-  ["do", "csinál"],
-  ["doctor", "orvos"],
-  ["drink", "inni / iszik"],
-  ["eat", "enni / eszik"],
-  ["evening", "este"],
-  ["excuse me", "elnézést"],
-  ["fly", "repül"],
-  ["French", "franciaul"],
-  ["fruit", "gyümölcs"],
-  ["garden", "kert"],
-  ["girl", "lány"],
-  ["are you happy", "orulsz"],
-  ["goodbye", "viszlat / viszontlátásra"],
-  ["happy", "boldog"],
-  ["here", "itt"],
-  ["hi", "szia"],
-  ["how are you", "hogy"],
-  ["hungry", "éhes"],
-  ["hurry", "siet"],
-  ["I", "En"],
-  ["in love", "szerelmes"],
-  ["inside", "bent"],
-  ["is", "van"],
-  ["lamp", "lámpa"],
-  ["learning", "tanul"],
-  ["library", "könyvtár"],
-  ["live", "él"],
-  ["looking for", "keresek"],
-  ["lucky", "szerencsés"],
-  ["man", "férfi"],
-  ["meat", "hús"],
-  ["milk", "tej"],
-  ["morning", "reggel"],
-  ["night", "éjszaka"],
-  ["notebook", "füzet"],
-  ["now", "most"],
-  ["ok / fine / well", "jól"],
-  ["only", "szak"],
-  ["orange", "narancs"],
-  ["there is none", "nincs"],
-  ["outside", "kint"],
-  ["pen", "toll"],
-  ["pencil", "ceruza"],
-  ["perfect", "tökéletes"],
-  ["quiet", "csendes"],
-  ["read", "olvas"],
-  ["recess", "szünet"],
-  ["rest", "pihen"],
-  ["restaurant", "étterem"],
-  ["run", "fut"],
-  ["sad", "szomorú"],
-  ["school", "iskola"],
-  ["see", "lát"],
-  ["sick", "rosszul / beteg"],
-  ["sing", "énekel"],
-  ["sit", "ül"],
-  ["sleepy", "álmos"],
-  ["sorry", "bocs"],
-  ["stand", "áll"],
-  ["store", "bolt / üzlet"],
-  ["student", "diák"],
-  ["teacher", "tanár"],
-  ["terrible", "szörnyű"],
-  ["text", "szöveg"],
-  ["thank you", "köszönöm"],
-  ["there", "ott"],
-  ["thirsty", "szomjas"],
-  ["this", "ez"],
-  ["unfortunately", "sajnos"],
-  ["vegetable", "zöldség"],
-  ["very / very much", "nagyon"],
-  ["very much", "szepen"],
-  ["wait", "vár"],
-  ["walk", "séta"],
-  ["water", "víz"],
-  ["weak", "gyenge"],
-  ["what", "mit"],
-  ["where", "hol"],
-  ["wine", "bor"],
-  ["woman", "nő"],
-  ["You", "Te"],
-  ["you are welcome", "szívesen"],
-  ["wish", "kíván"],
-  ["day", "napot"],
-  ["what is your name", "Hogy hivnak / hivjak"],
-  ["fresh", "friss"],
-  ["two", "kettő / két"],
-  ["one", "egy"],
-  ["cat", "macska"],
-  ["three", "három"],
-  ["rice", "rizs"],
-  ["bitter", "keserű"],
-  ["dog", "kutya"],
-  ["engineer", "mérnök"],
-  ["four", "négy"],
-  ["lunch", "ebéd"],
-  ["five", "öt"],
-  ["eight", "nyolc"],
-  ["cherry", "cseresznye"],
-  ["judge", "bíró"],
-  ["honey", "méz"],
-  ["six", "hat"],
-  ["cucumber", "uborka"],
-  ["few", "kevés"],
-  ["many", "sok"],
-  ["too", "túl"],
-  ["enough", "elég"],
-  ["some", "néhány"],
-  ["bread", "kenyér"],
-  ["slice", "szelet"],
-  ["beef", "marhahús"],
-  ["pork", "disznóhús"],
-  ["whole", "egész"],
-  ["half", "fél"],
-  ["tomato", "paradicsom"],
-  ["one and a half", "másfél"],
-  ["nine", "kilenc"],
-  ["potato", "krumpli"],
-  ["shout", "kiabálás"],
-  ["stay", "marad"],
-  ["buy", "vesz / "],
-  ["read", "olvas"],
-  ["building", "épület"],
-  ["bank", "bank"],
-  ["city", "város"],
-  ["new", "új"],
-  ["old", "régi"],
-  ["in front of", "előtt"],
-  ["train station", "pályaudvar"],
-  ["behind", "mögött"],
-  ["river", "folyó"],
-  ["under", "alatt"],
-  ["next to", "mellett"],
-  ["carrot", "répa"],
-  ["tasty", "finom"],
-  ["pasta", "tészta"],
-  ["stop (transport)", "megálló"],
-  ["bus stop", "buszmegálló"],
-  ["between", "között"],
-  ["closed", "zárva"],
-  ["open", "nyitva"],
-  ["swim", "úszik"],
-  ["because", "mert"],
-  ["child", "gyerek"],
-  ["lie down", "fekszik"],
-  ["play", "játszik\njátszotok"],
-  ["there", "oda"],
-  ["bath", "fürdő"],
-  ["here", "ide"],
-  ["come", "jön"],
-  ["sleep", "alszik"],
-  ["live", "lakik"],
-  ["go", "menni / megy"],
-  ["from here", "innen"],
-  ["from there", "onnen"],
-  ["can", "tud"],
-  ["laugh", "nevet"],
-  ["use", "használ"],
-  ["Where do you swim?", "Hol úszol"],
-  ["play tennis", "teniszez"],
-  ["clock", "óra"],
-  ["noon", "dél"],
-  ["quarter", "negyed"],
-  ["three quater", "háromnegyed"],
-  ["(in the) afternoon", "délután"],
-  ["eleven", "tizenegy"],
-  ["in the morning", "délelőtt"],
-  ["twelve", "tizenkét / tizenkettő"],
-  ["get up / wakes", "kel"],
-  ["at six", "hatkor"],
-  ["meet", "találkozó"],
-  ["at eight", "nyolckor"],
-  ["seven", "hét"],
-  ["at seven", "hétkor"],
-  ["minute", "perc"],
-  ["twenty", "húsz"],
-  ["midnight", "éjfél"],
-  ["when / at what time", "mikor"],
-  ["already", "már"],
-  ["movie", "film"],
-  ["breakfast", "reggeli"],
-  ["dinner", "vacsorazik"],
-  ["start / begin", "kezd"],
-  ["I am already here", "Én már itt vagyok"],
-  ["Monday", "hétfő"],
-  ["Wednesday", "szerda"],
-  ["every", "minden"],
-  ["Tuesday", "kedden"],
-  ["Thursday", "csütörtök"],
-  ["Sunday", "vasárnap"],
-  ["Saturday", "szombat"],
-  ["Friday", "péntek"],
-  ["Monday", "hétfő"],
-  ["today", "ma"],
-  ["tomorrow", "holnap"],
-  ["the day after tomorrow", "holnapután"],
-  ["day", "nap"],
-  ["weekend", "hétvége"],
-  ["day off", "szabadnap"],
-  ["weekday", "hétköznap"],
-  ["holiday", "ünnepnap"],
-  ["usually", "általában"],
-  ["T-shirt", "polo"],
-  ["yellow", "sarga"],
-  ["dress", "ruha"],
-  ["thirty", "harminc"],
-  ["how much", "mennyibe"],
-  ["cost", "kerül"],
-  ["forty", "negyven"],
-  ["black", "fekete"],
-  ["bag", "táska"],
-  ["hundred", "száz"],
-  ["five hundred", "ötszáz"],
-  ["thousand", "ezer"],
-  ["blue", "kék"],
-  ["white", "fehér"],
-  ["expensive", "drága"],
-  ["fitting room", "próbafülke"],
-  ["fifty", "ötven"],
-  ["striped", "csikos"],
-  ["umbrella", "esernyő"],
-  ["coat", "kabát"],
-  ["pants", "nadrág"],
-  ["cheap", "olcsó"],
-  ["price", "ár"],
-  ["shirt", "ing"],
-  ["scarf", "sál"],
-  ["belt", "öv"],
-  ["brown", "barna"],
-  ["long", "hosszú"],
-  ["salesperson", "eladó"],
-  ["hospital", "kórház"],
-  ["young", "fiatal"],
-  ["to take a bath", "füredni"],
-  ["to play football", "focizni"],
-  ["early / soon", "korán"],
-  ["using Duolingo", "duolingozol"],
-  ["like", "szeret"],
-  ["hate", "utál"],
-  ["tooth", "fog"],
-  ["possible", "lehető"],
-  ["to be", "lenni"],
-  ["ask for", "kérni"],
-  ["watching TV", "tévét nézni"],
-  ["butter", "vaj"],
-  ["I used to", "szoktam"],
-  ["on the chair", "széken"],
-  ["on/by bus", "buszon"],
-  ["shelf", "polc"],
-  ["streetcar", "villamoson"],
-  ["to travel", "utazni"],
-  ["on/by train", "vonaton"],
-  ["on the table", "asztalon"],
-  ["bridge", "hid"],
-  ["ship / boat", "hajó"],
-  ["on what", "min"],
-  ["street", "utca"],
-  ["grass", "fű"],
-  ["sidewalk", "járda"],
-  ["green", "zöld"],
-  ["market", "piac"],
-  ["on the ground", "földön"],
-  ["mountain", "hegy"],
-  ["square", "téren"],
-  ["fast", "gyors"],
-  ["rich", "gazdag"],
-  ["important", "fontos"],
-  ["slow", "lassú"],
-  ["short", "rövid"],
-  ["easy / lightweight", "könnyű"],
-  ["bad", "ross"],
-  ["dry", "száraz"],
-  ["wide", "széles"],
-  ["sea", "tenger"],
-  ["correct", "helyes"],
-  ["answer", "válasz"],
-  ["deep", "mély"],
-  ["elderly", "idős"],
-  ["strong", "erős"],
-  ["thin", "sovány"],
-  ["clean", "tiszta"],
-  ["to clean", "takari"],
-  ["ugly", "csúnya"],
-  ["famous", "híres"],
-  ["smart", "okos"],
-  ["heavy", "nehéz"],
-  ["fat", "kövér"],
-  ["old", "öreg"],
-  ["what (day)", "milyen (nap)"],
-  ["bit / little", "kis"],
-  ["mouse", "egér"],
-  ["fire", "tűz"],
-  ["question", "kérdés"],
-  ["there are none", "nincsenek"],
-  ["lion", "oroszlán"],
-  ["zoo", "állatkert"],
-  ["animal", "állat"],
-  ["giraffe", "zsiráf"],
-  ["monkey", "majom"],
-  ["frog", "béka"],
-  ["lizard", "gyík"],
-  ["fish", "hal"],
-  ["butterfly", "pillangó"],
-  ["kitten", "cica"],
-  ["duck", "kacsa"],
-  ["beetle", "bogár"],
-  ["snow", "hó"],
-  ["warm", "meleg"],
-  ["cold", "hideg"],
-  ["degree", "fok"],
-  ["will be", "lesz"],
-  ["sun", "nap"],
-  ["rain", "eső"],
-  ["rarely", "ritkán"],
-  ["often", "gyakran"],
-  ["wind", "szél"],
-  ["blow", "fúj"],
-  ["ice", "jég"],
-  ["summer", "nyár"],
-  ["winter", "tél"],
-  ["autumn / fall", "ősz"],
-  ["spring", "tavasz"],
-  ["weather", "idő"],
-  ["sunny", "napos"],
-  ["bicycle", "bicikli"],
-  ["shoe", "cipő"],
-  ["glove", "kesztyű"],
-  ["friend", "barátja"],
-  ["slippers", "papucsom"],
-  ["suitcase", "bőrönd"],
-  ["favorite", "kedvenc"],
-  ["bed", "ágy"],
-  ["German", "nemet"],
-  ["Greek", "görög"],
-  ["polish", "lengyel"],
-  ["italian", "olaszok"],
-  ["spanish", "spanyol"],
-  ["Turkish", "török"],
-  ["but / rather", "hanem"],
-  ["belgian", "belga"],
-  ["Chinese", "kinai"],
-  ["Austrian", "osztrák"],
-  ["drive", "vezet"],
-  ["know", "ismer"],
-  ["I am getting", "kapok"],
-  ["get", "kap"],
-  ["horse", "lo"],
-  ["letter", "level"],
-  ["example", "példa"],
-  ["money", "pénz"],
-  ["song", "dal"],
-  ["spend", "költ"],
-  ["stamp", "bélyeg"],
-  ["napkin", "szalvéta"],
-  ["cut", "vág"],
-  ["rent", "bérel"],
-  ["apartment", "lakás"],
-  ["build", "épít"],
-  ["collect", "gyűjt"],
-  ["walnut tree", "diófa"],
-  ["peanut butter", "mogyoróvaj"],
-  ["chestnut tree", "gesztenyefa"],
-  ["grind", "darál"],
-  ["poppy seed", "mák"],
-  ["catch", "fog"],
-  ["peanut", "mogyoró"],
-  ["nose", "orr"],
-  ["back", "hát"],
-  ["head", "fej"],
-  ["bleed", "vérzik"],
-  ["stomach", "has"],
-  ["hurts", "fáj"],
-  ["itch", "viszket"],
-  ["leg", "láb"],
-  ["eye", "szem"],
-  ["ear", "fül"],
-  ["mouth", "száj"],
-  ["arm", "kar"],
-  ["face", "arc"],
-  ["beard", "szakáll"],
-  ["hairy", "szőrös"],
-  ["neck", "nyak"],
-  ["hand", "kéz"],
-  ["heel / corner", "sarok"],
-  ["shoulder", "váll"],
-  ["buttock", "fenék"],
-  ["mustache", "bajusz"],
-  ["spine", "gerinc"],
-  ["knee", "térd"],
-  ["skin", "bőr"],
-  ["right", "jobb"],
-  ["left", "bal"],
-  ["body", "test"],
-  ["throat", "torok"],
-  ["thigh", "comb"],
-  ["fur", "szőr"],
-  ["finger", "ujj"],
-  ["blood", "vér"],
-  ["ankle", "boka"],
-  ["red-headed (рыжий)", "vörös"],
-  ["blond", "szőke"],
-  ["but", "de"],
-  ["how old", "hány éves"],
-  ["newspaper", "újság"],
-  ["bring", "hoz"],
-  ["something", "valami"],
-  ["this", "ezt"],
-  ["that", "azt"],
-  ["father-in-law", "após"],
-  ["name", "nev"],
-  ["grandchild", "unoka"],
-  ["relative", "rokonai"],
-  ["mother-in-law", "anyós"],
-  ["niece", "unokahúg"],
-  ["husband", "férj"],
-  ["bride/fiancee", "menyasszony"],
-  ["nephew", "unokaöcs"],
-  ["groom/fiance", "vőlegény"],
-  ["brother-in-law", "sógor"],
-  ["parents", "szülők"],
-  ["grandparents", "nagyszülők"],
-  ["sibling", "testvér"],
-  ["family", "család"],
-  ["younger sister", "húga"],
-  ["younger brother", "öccse"],
-  ["brother", "testvér"],
-  ["sister", "nővér"],
-  ["wife", "feleség"],
-  ["older sister", "nővér"],
-  ["daughter", "lánya"],
-  ["hear", "hall"],
-  ["listen (to smth)", "hallgat"],
-  ["push", "tol"],
-  ["visit", "meglátogat"],
-  ["find", "talál"],
-  ["enjoy", "élvez"],
-  ["measure", "lemér"],
-  ["warning", "figyelmeztetés"],
-  ["operating", "műtői"],
-  ["make", "készít"],
-  ["observing", "figyeli"],
-  ["know (smth)", "tud"],
-  ["know (smbd)", "ismer"],
-  ["you (тебя)", "teged"],
-  ["you (вас)", "titekat"],
-  ["wash dishes", "mosogat"],
-  ["guest", "vendég"],
-  ["you cold (замёрз)", "fázol"],
-  ["fight", "harcol"],
-  ["sneeze", "tüsszent"],
-  ["set", "mutat"],
-  ["adore (you)", "imádlak"],
-  ["bother/annoy", "zavar"],
-  ["envy", "irigyel"],
-  ["let go", "elengedem"],
-  ["over / yet", "vége"],
-  ["kiss", "csók"],
-  ["forget", "elfelejt"],
-  ["visit (smb)", "meglátogat"],
-  ["sorry", "sajnálat"],
-  ["word", "szó"],
-  ["sentence", "mondat"],
-  ["useful", "hasznos"],
-  ["language", "nyelv"],
-  ["son", "fiad"],
-  ["include/contain", "tartalmazza"],
-  ["imitate/mimic", "utánoz"],
-  ["like this", "így"],
-  ["match", "meccs"],
-  ["believe", "hisz"],
-  ["put", "tesz"],
-  ["money", "penz"],
-  ["pay", "fizet"],
-  ["motorcycle", "motor"],
-  ["on foot (пешком)", "gyalog"],
-  ["dangerous", "veszelyes"],
-  ["alone", "egyedul"],
-  ["together", "együtt"],
-  ["one of the", "egyik"],
-  ["another", "masik"],
-  ["arrive", "érkezik"],
-  // ["", "Berletem"], // Empty entry
-  ["ticket", "jegy"],
-  ["and", "pedig"],
-  ["safe", "biztonsagos"],
-  ["monthly pass", "Havy berletet"],
-  ["again", "ujra"],
-  ["monthly", "havi"],
-  ["snail / rolls", "csiga"],
-  ["bisquit", "kekszet"],
-  ["ham", "sonka"],
-  ["scrambled eggs", "rántotta"],
-  ["sour cream", "tejföl"],
-  ["lángos", "lángos"],
-  ["cafeteria", "menza"],
-  ["sour cream", "tejföl"],
-  ["strudel", "rétes"],
-  ["pumpkin", "tök"],
-  ["ice cream", "fagylalt"],
-  ["jam", "lekvár"],
-  ["pancake", "palacsinta"],
-  ["pastry", "szsütemény"],
-  ["present (gift)", "ajándék"],
-  ["sending", "küld"],
-  ["(to) her/him", "neki"],
-  ["(to) them", "nekik"],
-  ["give", "ad"],
-  ["(to) you", "neked/nektek"],
-  ["(to) me", "nekem"],
-  ["message", "üzenet"],
-  ["congratulations", "gratulálok"],
-  ["answer/reply", "válaszol"],
-  ["advise", "tanácsol"],
-  ["owe", "tartozik"],
-  ["lie", "hazud"],
-  ["taste", "iz"],
-  ["like", "tetsz"],
-  ["forward", "továbbít"],
-  ["forgive", "megbocsát"],
-  ["myself", "magamat"],
-  ["mirror", "tükör"],
-  ["empty", "üres"],
-  ["paint", "festék"],
-  ["picture", "kép"],
-  ["taking pictures", "fényképezés"],
-  ["play music", "zenél"],
-  ["play violin", "hegedül"],
-  ["beautiful", "gyönyörű"],
-  ["below", "lent"],
-  ["upstairs", "fent"],
-  ["in the front", "elöl"],
-  ["in the photo", "fényképen"],
-  ["concert", "koncert"],
-  ["performance/lecture", "előadás"],
-  ["ballet lesson", "balettóra"],
-  ["lavatory/restroom", "mosdó"],
-  ["volleyball", "röplabda"],
-  ["basketball", "kosárlabda"],
-  ["soccer", "foci"],
-  ["play handball", "kézilabdázni"],
-  ["water polo", "vízilabda"],
-  ["team", "csapat"],
-  ["knee injury", "térdsérülés"],
-  ["ankle injury", "boka sérülés"],
-  ["swimming", "úszás"],
-  ["player", "játékos"],
-  ["coach", "edző"],
-  ["supporter/fan", "szurkoló"],
-  ["on the field/pitch", "pályán"],
-  ["goalkeeper", "kapus"],
-  ["training", "edzés"],
-  ["kitchen", "konyha"],
-  ["bathroom", "fürdőszoba"],
-  ["basement/cellar", "pince"],
-  ["living room", "nappaliban"],
-  ["room", "szoba"],
-  ["box", "doboz"],
-  ["bedroom", "hálószoba"],
-  ["checkout", "pénztár"],
-  ["entrance", "bejárat"],
-  ["exit", "kijárat"],
-  ["hairdress", "fodrász"],
-  ["butcher", "hentes"],
-  ["dentist", "fogorvos"],
-  ["firm/company", "cég"],
-  ["at their place", "nálunk"],
-  ["skirt", "szoknya"],
-  ["sweater", "pulóver"],
-  ["ring", "gyűrű"],
-  ["hat", "kalap"],
-  ["necklace", "nyaklánc"],
-  ["socks", "zokni"],
-  ["gloves/mitten", "kesztyű"],
-  ["earrings", "fülbevalók"],
-  ["pocket", "zseb"],
-  ["boots", "csizma"],
-  ["watch", "karóra"],
-  ["sandal", "szandál"],
-  ["beanie", "sapka"],
-  ["tie", "nyakkendő"],
-  ["glasses", "szemüveg"],
-  ["on you", "rajtad"],
-  ["flower", "virág"],
-  ["door", "ajtó"],
-  ["curtain", "függöny"],
-  ["key", "kulcs"],
-  ["computer", "számítógép"],
-  ["carpet", "szőnyeg"],
-  ["kitchen furniture", "konyhabútor"],
-  ["knife", "kés"],
-  ["oven", "sütő"],
-  ["plate", "tányér"],
-  ["refrigerator", "hűtőszekrény"],
-  ["bowl", "tál"],
-  ["mug", "bögre"],
-  ["spoon", "kanál"],
-  ["fork", "villa"],
-  ["bathtub", "kád"],
-  ["comb", "fésű"],
-  ["shower", "zuhany"],
-  ["toothpaste", "fogkrém"],
-  ["recommend", "ajánlani"],
-  ["toothbrush", "fogkefe"],
-  ["razor", "borotva"],
-  ["armchair", "fotel"],
-  ["pillow", "párna"],
-  ["sofa / coach", "kanapé"],
-  ["towel", "törölköző"],
-  ["cupboard", "szekrény"],
-  ["blanket", "takaró"],
-  ["roof", "tető"],
-  ["mine / belongs", "enyém"],
-  ["hers", "az övé"],
-  ["yours", "tiéd / önöké"],
-  ["theirs", "övék"],
-  ["ours", "miénk"],
-  ["yours", "önöké"],
-  ["map", "térkép"],
-  ["medicine", "gyógyszer"],
-  ["best", "legjobb"],
-  ["class", "osztály"],
-  ["world", "világ"],
-  ["problem/trouble", "baj"],
-  ["January", "január"],
-  ["February", "február"],
-  ["March", "március"],
-  ["April", "április"],
-  ["May", "május"],
-  ["June", "június"],
-  ["July", "július"],
-  ["August", "augusztus"],
-  ["September", "szeptember"],
-  ["October", "október"],
-  ["November", "november"],
-  ["December", "december"],
-  ["last year", "tavaly"],
-  ["sometimes", "néha"],
-  ["next year", "jövőre"],
-  ["this year", "idén"],
-  ["drain / 'dye'", "lemerül"],
-  ["share / divide", "megoszt"],
-  ["keyboard", "billentyűzet"],
-  ["screen", "képernyő"],
-  ["sound", "hang"],
-  ["charger", "töltő"],
-  ["password", "jelszó"],
-  ["turn off", "kikapcsol"],
-  ["turn on", "bekapcsol"],
-  ["cable", "kábel"],
-  ["works", "müködik"],
-  ["delete", "töröl"],
-  ["accidentally", "véletlenül"],
-  ["to open", "megkinyitni"],
-  ["file", "fájlt"],
-  ["availability", "elérhetősége"],
-  ["from my contacts", "elérhetőségedeet"],
-  ["page", "oldalon"],
-  ["trash can", "kukák"],
-  ["at this/that", "ennel/annal"],
-  ["on this/that", "ezen/azon"],
-  ["in this/that", "ebben/abban"],
-  ["these/those", "ezeket/azokat"],
-  ["at these/those", "ezeknél/azoknál"],
-  ["on these/those", "ezeken/azokon"],
-  ["in these/those", "ezekben/azokban"],
-  ["phone number", "telefonszám"],
-  ["stoplight", "közlekedési lámpa"],
-  ["which", "melyik"],
-  ["party", "buli"],
-  ["nameday", "névnap"],
-  ["celebrate", "ünnepel"],
-  ["birthday", "születésnap"],
-  ["dream", "álom"],
-  ["Christmas", "karácsonyi"],
-  ["day off", "szabadnap"],
-  ["champagne", "pezsgő"],
-  ["New Year's Eve", "Szilveszter"],
-  ["date", "randi"],
-  ["want", "akar"],
-  ["instead", "helyette"],
-  ["bear", "medve"],
-  ["wolf", "farkas"],
-  ["bee", "méh"],
-  ["whale", "bálna"],
-  ["parrot", "papagáj"],
-  ["fly (animal)", "légy"],
-  ["ant", "hangya"],
-  ["climb/crawl", "mászik"],
-  ["rabbit", "nyúl"],
-  ["barking", "ugató"],
-  ["curious", "kíváncsi"],
-  ["spider", "pók"],
-  ["turtle", "teknős"],
-  ["roar", "üvöltés"],
-  ["cow", "tehén"],
-  ["snake", "kígyó"],
-  ["crab", "rák"],
-  ["bunny", "nyuszi"],
-  ["spotted", "foltos"],
-  ["shark", "cápa"],
-  ["rooster", "kakas"],
-  ["hunt", "vadászat"],
-  ["owl", "bagoly"],
-  ["hen", "tyúk"],
-  ["guinea pig", "tengerimalac"],
-];
+// --- 2. DEFINE YOUR VOCABULARIES ---
+// This is where you map display names to the raw URLs of your CSV files on GitHub.
+const vocabularies = {
+  // Use a "placeholder" or default value for the first option
+  "default": { name: "Select a vocabulary...", url: "" },
 
-// Ensure we always have at least 25 words for the 5x5 grid
+  "italian-numerals": {
+    name: "Italian Numerals",
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv"
+  },
+  "italian-irr-verbs": {
+    name: "Italian Irregular Verbs",
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv"
+  },
+  "italian-introductory": {
+    name: "Italian introductory words",
+    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv"
+  }
+};
+
+// Global variable to hold the currently loaded words
+let wordsData = [];
 const MIN_WORDS_FOR_GRID = 25;
+
+// --- UTILITY FUNCTIONS (Unchanged) ---
 
 // Function to shuffle an array (Fisher-Yates Algorithm)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+    [array[i], array[j]] = [array[j], array[i]];
   }
   return array;
 }
 
 // Function to parse CSV text
 function parseCSV(csvText) {
-    const lines = csvText.trim().split('\n');
-    const wordsArray = [];
-
-    for (const line of lines) {
-        // Split by comma, but handle potential commas within quotes (simple CSV parsing)
-        // This regex handles quoted fields containing commas, but won't handle escaped quotes.
-        // For robust CSV parsing, a library would be better, but for typical cases this is fine.
-        const regex = /("([^"]*)"|[^,]*)(,|$)/g;
-        let match;
-        let cells = [];
-        while ((match = regex.exec(line)) !== null && match[0] !== '') {
-            // match[1] is the captured group (either quoted or non-quoted cell)
-            // match[2] is the content inside quotes if it was a quoted cell
-            cells.push(match[2] || match[1].replace(/^"|"$/g, '')); // Remove surrounding quotes if they exist
-        }
-        
-        if (cells.length === 2) {
-            // Trim whitespace from each cell
-            const cleanedCells = cells.map(cell => cell.trim());
-            // Ensure cells are not empty strings before adding
-            if (cleanedCells[0] && cleanedCells[1]) {
-                wordsArray.push(cleanedCells);
-            }
-        }
+  const lines = csvText.trim().split('\n');
+  const wordsArray = [];
+  for (const line of lines) {
+    const regex = /("([^"]*)"|[^,]*)(,|$)/g;
+    let match;
+    let cells = [];
+    while ((match = regex.exec(line)) !== null && match[0] !== '') {
+      cells.push(match[2] || match[1].replace(/^"|"$/g, ''));
     }
-    return wordsArray;
+    if (cells.length === 2) {
+      const cleanedCells = cells.map(cell => cell.trim());
+      if (cleanedCells[0] && cleanedCells[1]) {
+        wordsArray.push(cleanedCells);
+      }
+    }
+  }
+  return wordsArray;
 }
-
 
 // Function to create and display cards
 function createAndDisplayCards(wordsToDisplay) {
-    // Clear previous cards
-    tableCardsContainer.innerHTML = '';
+  tableCardsContainer.innerHTML = '';
+  if (!wordsToDisplay || wordsToDisplay.length === 0) {
+    tableCardsContainer.innerHTML = '<p>No words available. Please select a vocabulary.</p>';
+    return;
+  }
 
-    if (!wordsToDisplay || wordsToDisplay.length === 0) {
-        tableCardsContainer.innerHTML = '<p>No words available. Please load a word list.</p>';
-        return;
+  const shuffledWords = shuffleArray([...wordsToDisplay]); // Create a copy to shuffle
+  let count = 0;
+
+  for (let i = 0; i < 5; i++) {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.justifyContent = 'center';
+
+    for (let j = 0; j < 5; j++) {
+      if (count >= shuffledWords.length || count >= MIN_WORDS_FOR_GRID) break;
+
+      const cardDiv = document.createElement('div');
+      cardDiv.className = 'card';
+      const flipCardDiv = document.createElement('div');
+      flipCardDiv.className = 'flipCard';
+      const frontFace = document.createElement('div');
+      frontFace.className = 'face front';
+      frontFace.innerHTML = shuffledWords[count][0];
+      const backFace = document.createElement('div');
+      backFace.className = 'face back';
+      backFace.innerHTML = shuffledWords[count][1];
+
+      flipCardDiv.appendChild(frontFace);
+      flipCardDiv.appendChild(backFace);
+      cardDiv.appendChild(flipCardDiv);
+
+      cardDiv.addEventListener('click', () => {
+        flipCardDiv.classList.toggle('flipped');
+      });
+
+      row.appendChild(cardDiv);
+      count++;
     }
-
-    const shuffledWords = shuffleArray(wordsToDisplay);
-    let count = 0;
-
-    // Create a 5x5 grid
-    for (let i = 0; i < 5; i++) {
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.justifyContent = 'center'; // Center cards in the row
-
-        for (let j = 0; j < 5; j++) {
-            if (count >= shuffledWords.length) break; // Stop if we run out of words
-
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'card';
-
-            const flipCardDiv = document.createElement('div');
-            flipCardDiv.className = 'flipCard';
-
-            const frontFace = document.createElement('div');
-            frontFace.className = 'face front';
-            frontFace.innerHTML = shuffledWords[count][0]; // English word
-
-            const backFace = document.createElement('div');
-            backFace.className = 'face back';
-            backFace.innerHTML = shuffledWords[count][1]; // Hungarian word
-
-            flipCardDiv.appendChild(frontFace);
-            flipCardDiv.appendChild(backFace);
-            cardDiv.appendChild(flipCardDiv);
-
-            // Add click listener for flipping
-            cardDiv.addEventListener('click', () => {
-                flipCardDiv.classList.toggle('flipped');
-            });
-
-            row.appendChild(cardDiv);
-            count++;
-        }
-        tableCardsContainer.appendChild(row);
-        if (count >= shuffledWords.length) break; // Stop after filling the grid
-    }
+    tableCardsContainer.appendChild(row);
+    if (count >= shuffledWords.length || count >= MIN_WORDS_FOR_GRID) break;
+  }
 }
 
-// Event listener for the file input
-wordFileInput.addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) {
-        return; // No file selected
+// --- 3. NEW: FUNCTION TO LOAD VOCABULARY FROM A URL ---
+async function loadVocabulary(url) {
+  if (!url) {
+    wordsData = [];
+    createAndDisplayCards(wordsData);
+    return;
+  }
+
+  // Show a loading message
+  tableCardsContainer.innerHTML = '<p>Loading vocabulary...</p>';
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.statusText}`);
     }
+    const csvText = await response.text();
+    const loadedWords = parseCSV(csvText);
 
-    // Basic validation: check if it's a CSV file
-    if (file.type && !file.type.includes('csv') && !file.name.toLowerCase().endsWith('.csv')) {
-        alert('Please select a valid CSV file.');
-        // Clear the input value so the same file can be selected again if needed
-        event.target.value = '';
-        return;
+    if (loadedWords.length >= MIN_WORDS_FOR_GRID) {
+      wordsData = loadedWords;
+      alert(`Loaded ${wordsData.length} words. Displaying 25 random cards.`);
+      createAndDisplayCards(wordsData); // Display cards from the newly loaded data
+    } else {
+      throw new Error(`Vocabulary must contain at least ${MIN_WORDS_FOR_GRID} word pairs. Loaded ${loadedWords.length}.`);
     }
+  } catch (error) {
+    alert('Error loading vocabulary: ' + error.message);
+    console.error("Loading Error:", error);
+    wordsData = [];
+    createAndDisplayCards(wordsData); // Clear the grid on error
+  }
+}
 
-    const reader = new FileReader();
-
-    reader.onload = function(e) {
-        const csvText = e.target.result;
-        try {
-            const loadedWords = parseCSV(csvText);
-            if (loadedWords.length >= MIN_WORDS_FOR_GRID) {
-                wordsData = loadedWords; // Update the global wordsData
-                alert(`Loaded ${loadedWords.length} words. Displaying the first 25.`);
-                createAndDisplayCards(wordsData.slice(0, 25)); // Display initial 25 cards from loaded data
-            } else {
-                alert(`The CSV file must contain at least ${MIN_WORDS_FOR_GRID} word pairs. Loaded ${loadedWords.length}. Please choose a file with more data.`);
-                // Clear the input value so the same file can be selected again if needed
-                event.target.value = '';
-                wordsData = []; // Reset to no words if invalid
-                tableCardsContainer.innerHTML = '<p>No words available. Please load a word list.</p>';
-            }
-        } catch (error) {
-            alert('Error parsing CSV file: ' + error.message);
-            console.error("CSV Parsing Error:", error);
-            // Clear the input value so the same file can be selected again if needed
-            event.target.value = '';
-            wordsData = []; // Reset to no words if error
-            tableCardsContainer.innerHTML = '<p>Error loading words. Please check the file format.</p>';
-        }
-    };
-
-    reader.onerror = function() {
-        alert('Error reading file.');
-        // Clear the input value so the same file can be selected again if needed
-        event.target.value = '';
-        wordsData = []; // Reset to no words if error
-        tableCardsContainer.innerHTML = '<p>Error loading words.</p>';
-    };
-
-    reader.readAsText(file); // Read the file as plain text
+// --- 4. NEW: EVENT LISTENER FOR THE DROPDOWN ---
+vocabularySelector.addEventListener('change', (event) => {
+  const selectedUrl = event.target.value;
+  loadVocabulary(selectedUrl);
 });
 
-// Event listener for the "Reload/Shuffle Words" button
+
+// --- EVENT LISTENER FOR RELOAD BUTTON (Slightly modified) ---
 reloadWordsButton.addEventListener('click', function() {
-    if (wordsData.length === 0) {
-        alert("Please load a word list first.");
-        return;
-    }
-    // Shuffle the current wordsData and display the first 25
-    createAndDisplayCards(wordsData.slice(0, 25));
+  if (wordsData.length < MIN_WORDS_FOR_GRID) {
+    alert("Please select and load a valid vocabulary first.");
+    return;
+  }
+  // Shuffle the current wordsData and display 25 cards
+  createAndDisplayCards(wordsData);
 });
 
-// Initial display of cards on page load using the default words
-// Ensure we always display at least 25 cards, even if the default list is smaller (though it's much larger)
+// --- 5. MODIFIED: INITIAL PAGE LOAD ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Use the first 25 words from the default list if available
-    createAndDisplayCards(wordsData.slice(0, 25));
+  // Populate the dropdown from the vocabularies object
+  for (const key in vocabularies) {
+    const option = document.createElement('option');
+    option.value = vocabularies[key].url;
+    option.textContent = vocabularies[key].name;
+    vocabularySelector.appendChild(option);
+  }
+
+  // Initial display is empty until user selects a vocabulary
+  createAndDisplayCards([]);
 });
+
+// --- REMOVED: The old file input event listener has been completely removed. ---

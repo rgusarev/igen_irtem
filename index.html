@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ENG-HUN Word Train</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="styles.css">
+  <title>Word Trainer</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
-    <div class="controls">
-        <label title="CSV file with 2 columns" for="wordFile" class="load-button">Load Words</label>
-        <input type="file" id="wordFile" accept=".csv" style="display: none;">
-        <button id="reloadWordsButton" class="load-button">Reload/Shuffle Words</button>
-    </div>
+<div class="controls">
+  <!-- The file input has been replaced with this label and select dropdown -->
+  <label for="vocabularySelector" class="control-label">Select Vocabulary:</label>
+  <select id="vocabularySelector">
+    <!-- This dropdown will be filled by script.js when the page loads -->
+  </select>
 
-    <div id="tableCards"></div>
+  <button id="reloadWordsButton" class="load-button">Reload/Shuffle Words</button>
+</div>
 
-    <script src="script.js"></script>
+<div id="tableCards"></div>
+
+<script src="script.js"></script>
 </body>
 </html>
