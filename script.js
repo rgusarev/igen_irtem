@@ -1,42 +1,26 @@
 // --- 1. GET HTML ELEMENTS ---
 const tableCardsContainer = document.getElementById('tableCards');
-const vocabularySelector = document.getElementById('vocabularySelector'); // New: dropdown element
+const vocabularySelector = document.getElementById('vocabularySelector');
 const reloadWordsButton = document.getElementById('reloadWordsButton');
+const speakButton = document.getElementById('speakButton');
 
 // --- 2. DEFINE YOUR VOCABULARIES ---
-// This is where you map display names to the raw URLs of your CSV files on GitHub.
 const vocabularies = {
-  // Use a "placeholder" or default value for the first option
   "default": { name: "Select a vocabulary...", url: "" },
-  "hungarian-common-words": {
-    name: "Hungarian common words",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian-common-words.csv"
-  },
-  "italian-common-nouns": {
-    name: "Italian common words",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv"
-  },
-  "italian-numerals": {
-    name: "Italian numerals",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv"
-  },
-  "italian-irr-verbs": {
-    name: "Italian irregular verbs",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv"
-  },
-  "italian-introductory": {
-    name: "Italian introductory words",
-    url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv"
-  }
+  "hungarian-common-words": { name: "Hungarian common words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian-common-words.csv" },
+  "italian-common-nouns": { name: "Italian common nouns", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv" },
+  "italian-numerals": { name: "Italian numerals", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv" },
+  "italian-irr-verbs": { name: "Italian irregular verbs", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv" },
+  "italian-introductory": { name: "Italian introductory words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv" }
 };
 
-// Global variable to hold the currently loaded words
+// --- GLOBAL VARIABLES ---
 let wordsData = [];
+let lastClickedCard = null;
+let italianColumnIndex = -1; // NEW: To store which column (0 or 1) is Italian. -1 means not found.
 const MIN_WORDS_FOR_GRID = 25;
 
-// --- UTILITY FUNCTIONS (Unchanged) ---
-
-// Function to shuffle an array (Fisher-Yates Algorithm)
+// --- UTILITY FUNCTIONS ---
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -45,62 +29,111 @@ function shuffleArray(array) {
   return array;
 }
 
-// Function to parse CSV text
+// --- MODIFIED CSV PARSER ---
 function parseCSV(csvText) {
   const lines = csvText.trim().split('\n');
-  const wordsArray = [];
-  for (const line of lines) {
-    const regex = /("([^"]*)"|[^,]*)(,|$)/g;
-    let match;
-    let cells = [];
-    while ((match = regex.exec(line)) !== null && match[0] !== '') {
-      cells.push(match[2] || match[1].replace(/^"|"$/g, ''));
+  if (lines.length < 1) {
+    return { words: [], italianIndex: -1 }; // File is empty
+  }
+
+  // 1. Parse the header row to find the languages
+  const headerLine = lines[0];
+  const headerCells = headerLine.split(',').map(cell => cell.trim().toLowerCase());
+
+  let foundItalianIndex = -1;
+  if (headerCells.length === 2) {
+    if (headerCells[0].includes('italian')) {
+      foundItalianIndex = 0;
+    } else if (headerCells[1].includes('italian')) {
+      foundItalianIndex = 1;
     }
-    if (cells.length === 2) {
-      const cleanedCells = cells.map(cell => cell.trim());
-      if (cleanedCells[0] && cleanedCells[1]) {
-        wordsArray.push(cleanedCells);
+  }
+
+  // 2. Determine which lines are data lines (all lines after the first)
+  const wordLines = lines.slice(1);
+  const wordsArray = [];
+  for (const line of wordLines) {
+    const cells = line.split(',').map(cell => cell.trim());
+    if (cells.length === 2 && cells[0] && cells[1]) {
+      wordsArray.push(cells);
+    }
+  }
+
+  // If no words were found, check if the first line was actually data
+  if (wordsArray.length === 0 && lines.length > 0) {
+    const firstLineCells = lines[0].split(',').map(cell => cell.trim());
+    if (firstLineCells.length === 2 && firstLineCells[0] && firstLineCells[1]) {
+      wordsArray.push(firstLineCells);
+      // also parse all other lines
+      for (let i = 1; i < lines.length; i++) {
+        const dataCells = lines[i].split(',').map(cell => cell.trim());
+        if (dataCells.length === 2 && dataCells[0] && dataCells[1]) {
+          wordsArray.push(dataCells);
+        }
       }
     }
   }
-  return wordsArray;
+
+  // Return both the words and the index of the Italian column
+  return { words: wordsArray, italianIndex: foundItalianIndex };
 }
 
-// Function to create and display cards
+// --- CORE FUNCTIONS ---
 function createAndDisplayCards(wordsToDisplay) {
   tableCardsContainer.innerHTML = '';
+  lastClickedCard = null;
   if (!wordsToDisplay || wordsToDisplay.length === 0) {
     tableCardsContainer.innerHTML = '<p>No words available. Please select a vocabulary.</p>';
     return;
   }
 
-  const shuffledWords = shuffleArray([...wordsToDisplay]); // Create a copy to shuffle
+  const shuffledWords = shuffleArray([...wordsToDisplay]);
   let count = 0;
-
   for (let i = 0; i < 5; i++) {
     const row = document.createElement('div');
     row.style.display = 'flex';
     row.style.justifyContent = 'center';
-
     for (let j = 0; j < 5; j++) {
       if (count >= shuffledWords.length || count >= MIN_WORDS_FOR_GRID) break;
-
       const cardDiv = document.createElement('div');
       cardDiv.className = 'card';
       const flipCardDiv = document.createElement('div');
       flipCardDiv.className = 'flipCard';
       const frontFace = document.createElement('div');
       frontFace.className = 'face front';
-      frontFace.innerHTML = shuffledWords[count][0];
       const backFace = document.createElement('div');
       backFace.className = 'face back';
-      backFace.innerHTML = shuffledWords[count][1];
+
+      // --- MODIFIED: Logic to decide which word goes on the front face ---
+      const pair = shuffledWords[count];
+      let frontWord, backWord;
+
+      if (italianColumnIndex === 0) {
+        // Italian is in the first column, so show the second (non-Italian) column first.
+        frontWord = pair[1];
+        backWord = pair[0];
+      } else if (italianColumnIndex === 1) {
+        // Italian is in the second column, so show the first (non-Italian) column first.
+        frontWord = pair[0];
+        backWord = pair[1];
+      } else {
+        // Default behavior if "Italian" is not in the header: show the first column.
+        frontWord = pair[0];
+        backWord = pair[1];
+      }
+
+      frontFace.innerHTML = frontWord;
+      backFace.innerHTML = backWord;
+      // --- End of modification ---
 
       flipCardDiv.appendChild(frontFace);
       flipCardDiv.appendChild(backFace);
       cardDiv.appendChild(flipCardDiv);
 
       cardDiv.addEventListener('click', () => {
+        if (lastClickedCard) lastClickedCard.classList.remove('selected');
+        cardDiv.classList.add('selected');
+        lastClickedCard = cardDiv;
         flipCardDiv.classList.toggle('flipped');
       });
 
@@ -112,29 +145,27 @@ function createAndDisplayCards(wordsToDisplay) {
   }
 }
 
-// --- 3. NEW: FUNCTION TO LOAD VOCABULARY FROM A URL ---
+// --- MODIFIED: Load function to handle new parser output ---
 async function loadVocabulary(url) {
   if (!url) {
     wordsData = [];
+    italianColumnIndex = -1;
     createAndDisplayCards(wordsData);
     return;
   }
-
-  // Show a loading message
   tableCardsContainer.innerHTML = '<p>Loading vocabulary...</p>';
-
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Network response was not ok: ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
     const csvText = await response.text();
-    const loadedWords = parseCSV(csvText);
+
+    const vocabularyData = parseCSV(csvText); // Get the object from the parser
+    const loadedWords = vocabularyData.words;
+    italianColumnIndex = vocabularyData.italianIndex; // Set the global variable
 
     if (loadedWords.length >= MIN_WORDS_FOR_GRID) {
       wordsData = loadedWords;
-      alert(`Loaded ${wordsData.length} words. Displaying 25 random cards.`);
-      createAndDisplayCards(wordsData); // Display cards from the newly loaded data
+      createAndDisplayCards(wordsData);
     } else {
       throw new Error(`Vocabulary must contain at least ${MIN_WORDS_FOR_GRID} word pairs. Loaded ${loadedWords.length}.`);
     }
@@ -142,39 +173,48 @@ async function loadVocabulary(url) {
     alert('Error loading vocabulary: ' + error.message);
     console.error("Loading Error:", error);
     wordsData = [];
-    createAndDisplayCards(wordsData); // Clear the grid on error
+    italianColumnIndex = -1;
+    createAndDisplayCards(wordsData);
   }
 }
 
-// --- 4. NEW: EVENT LISTENER FOR THE DROPDOWN ---
+// --- EVENT LISTENERS (Unchanged) ---
 vocabularySelector.addEventListener('change', (event) => {
-  const selectedUrl = event.target.value;
-  loadVocabulary(selectedUrl);
+  loadVocabulary(event.target.value);
 });
 
-
-// --- EVENT LISTENER FOR RELOAD BUTTON (Slightly modified) ---
 reloadWordsButton.addEventListener('click', function() {
   if (wordsData.length < MIN_WORDS_FOR_GRID) {
     alert("Please select and load a valid vocabulary first.");
     return;
   }
-  // Shuffle the current wordsData and display 25 cards
   createAndDisplayCards(wordsData);
 });
 
-// --- 5. MODIFIED: INITIAL PAGE LOAD ---
+speakButton.addEventListener('click', () => {
+  if (!lastClickedCard) {
+    alert('Please click on a card first to select a word to speak.');
+    return;
+  }
+  if ('speechSynthesis' in window) {
+    const flipCard = lastClickedCard.querySelector('.flipCard');
+    const isFlipped = flipCard.classList.contains('flipped');
+    const visibleFace = isFlipped ? flipCard.querySelector('.face.back') : flipCard.querySelector('.face.front');
+    const textToSpeak = visibleFace.innerText;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = 'it-IT';
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert('Sorry, your browser does not support the text-to-speech feature.');
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
-  // Populate the dropdown from the vocabularies object
   for (const key in vocabularies) {
     const option = document.createElement('option');
     option.value = vocabularies[key].url;
     option.textContent = vocabularies[key].name;
     vocabularySelector.appendChild(option);
   }
-
-  // Initial display is empty until user selects a vocabulary
   createAndDisplayCards([]);
 });
-
-// --- REMOVED: The old file input event listener has been completely removed. ---
