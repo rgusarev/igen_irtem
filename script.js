@@ -8,7 +8,7 @@ const speakButton = document.getElementById('speakButton');
 const vocabularies = {
   "default": { name: "Select a vocabulary...", url: "" },
   "hungarian-common-words": { name: "Hungarian common words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/hungarian-common-words.csv" },
-  "italian-common-nouns": { name: "Italian common nouns", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv" },
+  "italian-common-nouns": { name: "Italian common words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv" },
   "italian-numerals": { name: "Italian numerals", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv" },
   "italian-irr-verbs": { name: "Italian irregular verbs", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv" },
   "italian-introductory": { name: "Italian introductory words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv" }
@@ -17,8 +17,28 @@ const vocabularies = {
 // --- GLOBAL VARIABLES ---
 let wordsData = [];
 let lastClickedCard = null;
-let italianColumnIndex = -1; // NEW: To store which column (0 or 1) is Italian. -1 means not found.
+let italianColumnIndex = -1;
 const MIN_WORDS_FOR_GRID = 25;
+
+// --- NEW: ADVANCED SPEECH SYNTHESIS SETUP ---
+let italianVoice = null; // A variable to hold our chosen Italian voice object
+
+function findAndSetItalianVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  // Prioritize Google voices as they are often high quality
+  italianVoice = voices.find(voice => voice.lang === 'it-IT' && voice.name.includes('Google'));
+  if (!italianVoice) {
+    italianVoice = voices.find(voice => voice.lang === 'it-IT');
+  }
+  if (italianVoice) {
+    console.log("High-quality Italian voice selected:", italianVoice.name);
+  } else {
+    console.log("No specific Italian voice found, will use browser default.");
+  }
+}
+// The list of voices is loaded asynchronously. We must wait for this event.
+window.speechSynthesis.onvoiceschanged = findAndSetItalianVoice;
+findAndSetItalianVoice(); // Call it once in case voices are already loaded
 
 // --- UTILITY FUNCTIONS ---
 function shuffleArray(array) {
@@ -29,52 +49,32 @@ function shuffleArray(array) {
   return array;
 }
 
-// --- MODIFIED CSV PARSER ---
 function parseCSV(csvText) {
   const lines = csvText.trim().split('\n');
-  if (lines.length < 1) {
-    return { words: [], italianIndex: -1 }; // File is empty
-  }
-
-  // 1. Parse the header row to find the languages
+  if (lines.length < 1) return { words: [], italianIndex: -1 };
   const headerLine = lines[0];
   const headerCells = headerLine.split(',').map(cell => cell.trim().toLowerCase());
-
   let foundItalianIndex = -1;
   if (headerCells.length === 2) {
-    if (headerCells[0].includes('italian')) {
-      foundItalianIndex = 0;
-    } else if (headerCells[1].includes('italian')) {
-      foundItalianIndex = 1;
-    }
+    if (headerCells[0].includes('italian')) foundItalianIndex = 0;
+    else if (headerCells[1].includes('italian')) foundItalianIndex = 1;
   }
-
-  // 2. Determine which lines are data lines (all lines after the first)
   const wordLines = lines.slice(1);
   const wordsArray = [];
   for (const line of wordLines) {
     const cells = line.split(',').map(cell => cell.trim());
-    if (cells.length === 2 && cells[0] && cells[1]) {
-      wordsArray.push(cells);
-    }
+    if (cells.length === 2 && cells[0] && cells[1]) wordsArray.push(cells);
   }
-
-  // If no words were found, check if the first line was actually data
   if (wordsArray.length === 0 && lines.length > 0) {
     const firstLineCells = lines[0].split(',').map(cell => cell.trim());
     if (firstLineCells.length === 2 && firstLineCells[0] && firstLineCells[1]) {
       wordsArray.push(firstLineCells);
-      // also parse all other lines
       for (let i = 1; i < lines.length; i++) {
         const dataCells = lines[i].split(',').map(cell => cell.trim());
-        if (dataCells.length === 2 && dataCells[0] && dataCells[1]) {
-          wordsArray.push(dataCells);
-        }
+        if (dataCells.length === 2 && dataCells[0] && dataCells[1]) wordsArray.push(dataCells);
       }
     }
   }
-
-  // Return both the words and the index of the Italian column
   return { words: wordsArray, italianIndex: foundItalianIndex };
 }
 
@@ -86,7 +86,6 @@ function createAndDisplayCards(wordsToDisplay) {
     tableCardsContainer.innerHTML = '<p>No words available. Please select a vocabulary.</p>';
     return;
   }
-
   const shuffledWords = shuffleArray([...wordsToDisplay]);
   let count = 0;
   for (let i = 0; i < 5; i++) {
@@ -103,40 +102,26 @@ function createAndDisplayCards(wordsToDisplay) {
       frontFace.className = 'face front';
       const backFace = document.createElement('div');
       backFace.className = 'face back';
-
-      // --- MODIFIED: Logic to decide which word goes on the front face ---
       const pair = shuffledWords[count];
       let frontWord, backWord;
-
       if (italianColumnIndex === 0) {
-        // Italian is in the first column, so show the second (non-Italian) column first.
-        frontWord = pair[1];
-        backWord = pair[0];
+        frontWord = pair[1]; backWord = pair[0];
       } else if (italianColumnIndex === 1) {
-        // Italian is in the second column, so show the first (non-Italian) column first.
-        frontWord = pair[0];
-        backWord = pair[1];
+        frontWord = pair[0]; backWord = pair[1];
       } else {
-        // Default behavior if "Italian" is not in the header: show the first column.
-        frontWord = pair[0];
-        backWord = pair[1];
+        frontWord = pair[0]; backWord = pair[1];
       }
-
       frontFace.innerHTML = frontWord;
       backFace.innerHTML = backWord;
-      // --- End of modification ---
-
       flipCardDiv.appendChild(frontFace);
       flipCardDiv.appendChild(backFace);
       cardDiv.appendChild(flipCardDiv);
-
       cardDiv.addEventListener('click', () => {
         if (lastClickedCard) lastClickedCard.classList.remove('selected');
         cardDiv.classList.add('selected');
         lastClickedCard = cardDiv;
         flipCardDiv.classList.toggle('flipped');
       });
-
       row.appendChild(cardDiv);
       count++;
     }
@@ -145,7 +130,6 @@ function createAndDisplayCards(wordsToDisplay) {
   }
 }
 
-// --- MODIFIED: Load function to handle new parser output ---
 async function loadVocabulary(url) {
   if (!url) {
     wordsData = [];
@@ -158,11 +142,9 @@ async function loadVocabulary(url) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Network response was not ok: ${response.statusText}`);
     const csvText = await response.text();
-
-    const vocabularyData = parseCSV(csvText); // Get the object from the parser
+    const vocabularyData = parseCSV(csvText);
     const loadedWords = vocabularyData.words;
-    italianColumnIndex = vocabularyData.italianIndex; // Set the global variable
-
+    italianColumnIndex = vocabularyData.italianIndex;
     if (loadedWords.length >= MIN_WORDS_FOR_GRID) {
       wordsData = loadedWords;
       createAndDisplayCards(wordsData);
@@ -178,7 +160,7 @@ async function loadVocabulary(url) {
   }
 }
 
-// --- EVENT LISTENERS (Unchanged) ---
+// --- EVENT LISTENERS ---
 vocabularySelector.addEventListener('change', (event) => {
   loadVocabulary(event.target.value);
 });
@@ -191,6 +173,7 @@ reloadWordsButton.addEventListener('click', function() {
   createAndDisplayCards(wordsData);
 });
 
+// --- MODIFIED: SPEAK BUTTON EVENT LISTENER ---
 speakButton.addEventListener('click', () => {
   if (!lastClickedCard) {
     alert('Please click on a card first to select a word to speak.');
@@ -201,8 +184,22 @@ speakButton.addEventListener('click', () => {
     const isFlipped = flipCard.classList.contains('flipped');
     const visibleFace = isFlipped ? flipCard.querySelector('.face.back') : flipCard.querySelector('.face.front');
     const textToSpeak = visibleFace.innerText;
+
+    // Create the utterance with the text
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+    // Set language as a fallback
     utterance.lang = 'it-IT';
+
+    // Apply the high-quality voice we found earlier
+    if (italianVoice) {
+      utterance.voice = italianVoice;
+    }
+
+    // Set a slower rate for clarity
+    utterance.rate = 0.8;
+
+    // Speak the word
     window.speechSynthesis.speak(utterance);
   } else {
     alert('Sorry, your browser does not support the text-to-speech feature.');
