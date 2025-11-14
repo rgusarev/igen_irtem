@@ -11,7 +11,8 @@ const vocabularies = {
   "italian-common-nouns": { name: "Italian common words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_common_nouns.csv" },
   "italian-numerals": { name: "Italian numerals", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv" },
   "italian-irr-verbs": { name: "Italian irregular verbs", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv" },
-  "italian-introductory": { name: "Italian introductory words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv" }
+  "italian-introductory": { name: "Italian introductory words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv" },
+  "fonetics (basics)": { name: "Italian fonetics", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/fonetics.csv" }
 };
 
 // --- GLOBAL VARIABLES ---
