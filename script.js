@@ -217,3 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   createAndDisplayCards([]);
 });
+
+document.addEventListener("keydown", function(event) {
+  // Check if the pressed key is "S" (uppercase or lowercase)
+  if (event.key === "s" || event.key === "S") {
+    document.getElementById("speakButton").click();
+  }
+});
