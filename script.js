@@ -12,6 +12,7 @@ const vocabularies = {
   "italian-numerals": { name: "Italian numerals", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_numerals.csv" },
   "italian-irr-verbs": { name: "Italian irregular verbs", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_irregular_verbs_conj.csv" },
   "italian-introductory": { name: "Italian introductory words", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/italian_introductory_words.csv" },
+  "IT-RU-food": { name: "It-RU raw food", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/it_ru_food.csv" },
   "fonetics-basics": { name: "Italian fonetics", url: "https://raw.githubusercontent.com/rgusarev/igen_irtem/refs/heads/main/fonetics.csv" }
 };
 
