@@ -1,44 +1,115 @@
 Italian,Russian
-pane,хлеб
-pasta,паста
-riso,рис
-farina,мука
-olio d'oliva,оливковое масло
-burro,сливочное масло
-formaggio,сыр
-latte,молоко
-uova,яйца
-manzo,говядина
-maiale,свинина
-agnello,ягнятина
-pollo,курица
-pesce,рыба
-gamberi,креветки
-pomodoro,помидоры
-patata,картофель
-cipolla,лук
-aglio,чеснок
-carota,морковь
-sedano,сельдерей
-peperone,болгарский перец
-melanzana,баклажан
-zucchina,кабачок
-lattuga,салат
-spinaci,шпинат
-broccoli,брокколи
-cavolfiore,цветная капуста
-mela,яблоко
-pera,груша
-banana,банан
-arancia,апельсин
-limone,лимон
-uva,виноград
-fragola,клубника
-ciliegia,вишня
-pesca,персик
-anguria,арбуз
-melone,дыня
-mandorle,миндаль
-nocciole,фундук
-noci,грецкие орехи
-miele,мёд
+Verdure,Овощи
+Aglio,Чеснок
+Asparago,Спаржа
+Barbabietola,Свёкла
+Broccolo,Брокколи
+Carciofo,Артишок
+Carota,Морковь
+Cavolo,Капуста
+Cetriolo,Огурец
+Cipolla,Лук
+Finocchio,Фенхель
+Funghi,Грибы
+Insalata,Салат
+Lattuga,Латук
+Melanzana,Баклажан
+Patata,Картофель
+Peperone,Перец
+Pomodoro,Помидор
+Ravanello,Редис
+Rucola,Руккола
+Sedano,Сельдерей
+Spinaci,Шпинат
+Zucca,Тыква
+Zucchina,Кабачок
+Frutta,Фрукты
+Albicocca,Абрикос
+Arancia,Апельсин
+Ciliegia,Вишня
+Fico,Инжир
+Fragola,Клубника
+Limone,Лимон
+Mela,Яблоко
+Melone,Дыня
+Pera,Груша
+Pesca,Персик
+Prugna,Слива
+Uva,Виноград
+Frutti di bosco,Ягоды
+Mirtillo,Черника
+Lampone,Малина
+Mora,Ежевика
+Ribes,Смородина
+Carne,Мясо
+Manzo,Говядина
+Vitello,Телятина
+Maiale,Свинина
+Agnello,Ягнёнок
+Prosciutto,Ветчина
+Salame,Салями
+Salsiccia,Колбаса
+Pesce,Рыба
+Salmone,Лосось
+Storione,Осётр
+Aringa,Сельдь
+Trota,Форель
+Tonno,Тунец
+Latticini,Молочные продукты
+Latte,Молоко
+Formaggio,Сыр
+Parmigiano Reggiano,Пармиджано Реджано
+Pecorino,Пекорино
+Ricotta,Рикотта
+Mozzarella,Моцарелла
+Gorgonzola,Горгондзола
+Tvorog,Творог
+Smetana,Сметана
+Kefir,Кефир
+Erbe e Spezie,Травы и специи
+Basilico,Базилик
+Prezzemolo,Петрушка
+Rosmarino,Розмарин
+Salvia,Шалфей
+Timo,Тимьян
+Origano,Орегано
+Menta,Мята
+Peperoncino,Острый перец
+Pepe nero,Чёрный перец
+Aneto,Укроп
+Coriandolo,Кориандр
+Rafano,Хрен
+Senape,Горчица
+Alloro,Лавровый лист
+Cereali e Legumi,Зерновые и бобовые
+Grano,Пшеница
+Orzo,Ячмень
+Avena,Овёс
+Segale,Рожь
+Grano saraceno,Гречка
+Riso,Рис
+Farro,Полба
+Mais,Кукуруза
+Fagioli,Фасоль
+Lenticchie,Чечевица
+Ceci,Нут
+Piselli,Горох
+Oli e Aceti,Масла и уксусы
+Olio d'oliva,Оливковое масло
+Olio di semi di girasole,Подсолнечное масло
+Aceto,Уксус
+Aceto balsamico,Бальзамический уксус
+Frutta secca e Semi,Орехи и семена
+Noci,Грецкие орехи
+Mandorle,Миндаль
+Nocciole,Фундук
+Pinoli,Кедровые орехи
+Pistacchi,Фисташки
+Semi di girasole,Семена подсолнечника
+Semi di papavero,Мак
+Pane,Хлеб
+Pane di grano,Пшеничный хлеб
+Pane di segale,Ржаной хлеб
+Dolcificanti,Подсластители
+Miele,Мёд
+Zucchero,Сахар
